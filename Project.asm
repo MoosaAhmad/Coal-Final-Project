@@ -1,6 +1,12 @@
 [org 0x0100]
 
 jmp start
+entry1:db 'Entry 1$'
+entry2:db 'Entry 2$'
+endA:db 'End A$'
+endB:db 'End B$'
+endC:db 'End C$'
+endD:db 'End D$'
 
 clrscr:
     push es
