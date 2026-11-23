@@ -1,0 +1,565 @@
+     1                                  [org 0x0100]
+     2                                  
+     3 00000000 E98407                  jmp start
+     4 00000003 00000000                oldisr:dd 0
+     5 00000007 01                      selection:db 1
+     6 00000008 00                      changed: db 0
+     7 00000009 00                      enterPressed: db 0
+     8 0000000A 507265737320456E74-     prompt:db 'Press Enter to Start$'
+     9 00000013 657220746F20537461-
+    10 0000001C 727424             
+    11 0000001F 3E202053696E676C65-     opt1:db '>  Singleplayer'
+    12 00000028 706C61796572       
+    13 0000002E 3E20204D756C746970-     opt2:db '>  Multiplayer'
+    14 00000037 6C61796572         
+    15 0000003C 45786974                opt3:db 'Exit'
+    16                                  
+    17                                  strwelcome:
+    18 00000040 2D2D2D2D2D2D2D2D2D-         db '-------------------#---#-###-#---###-###-#---#-###---###-###--------------------'
+    19 00000049 2D2D2D2D2D2D2D2D2D-
+    20 00000052 2D232D2D2D232D2323-
+    21 0000005B 232D232D2D2D232323-
+    22 00000064 2D2323232D232D2D2D-
+    23 0000006D 232D2323232D2D2D23-
+    24 00000076 23232D2323232D2D2D-
+    25 0000007F 2D2D2D2D2D2D2D2D2D-
+    26 00000088 2D2D2D2D2D2D2D2D   
+    27 00000090 2D2D2D2D2D2D2D2D2D-         db '-------------------#-#-#-##--#---#---#-#-##-##-##-----#--#-#--------------------'
+    28 00000099 2D2D2D2D2D2D2D2D2D-
+    29 000000A2 2D232D232D232D2323-
+    30 000000AB 2D2D232D2D2D232D2D-
+    31 000000B4 2D232D232D23232D23-
+    32 000000BD 232D23232D2D2D2D2D-
+    33 000000C6 232D2D232D232D2D2D-
+    34 000000CF 2D2D2D2D2D2D2D2D2D-
+    35 000000D8 2D2D2D2D2D2D2D2D   
+    36 000000E0 2D2D2D2D2D2D2D2D2D-         db '-------------------##-##-#---#---#---#-#-#-#-#-#------#--#-#--------------------'
+    37 000000E9 2D2D2D2D2D2D2D2D2D-
+    38 000000F2 2D23232D23232D232D-
+    39 000000FB 2D2D232D2D2D232D2D-
+    40 00000104 2D232D232D232D232D-
+    41 0000010D 232D232D2D2D2D2D2D-
+    42 00000116 232D2D232D232D2D2D-
+    43 0000011F 2D2D2D2D2D2D2D2D2D-
+    44 00000128 2D2D2D2D2D2D2D2D   
+    45 00000130 2D2D2D2D2D2D2D2D2D-         db '-------------------#---#-###-###-###-###-#---#-###----#--###--------------------'
+    46 00000139 2D2D2D2D2D2D2D2D2D-
+    47 00000142 2D232D2D2D232D2323-
+    48 0000014B 232D2323232D232323-
+    49 00000154 2D2323232D232D2D2D-
+    50 0000015D 232D2323232D2D2D2D-
+    51 00000166 232D2D2323232D2D2D-
+    52 0000016F 2D2D2D2D2D2D2D2D2D-
+    53 00000178 2D2D2D2D2D2D2D2D   
+    54                                  
+    55                                  strswitchyard:
+    56 00000180 2D2D2D2D2D2D232323-         db '------######-##---##-####-######--#####-##--##-##--##--####--#####--#####-------'
+    57 00000189 2323232D23232D2D2D-
+    58 00000192 23232D232323232D23-
+    59 0000019B 23232323232D2D2323-
+    60 000001A4 2323232D23232D2D23-
+    61 000001AD 232D23232D2D23232D-
+    62 000001B6 2D232323232D2D2323-
+    63 000001BF 2323232D2D23232323-
+    64 000001C8 232D2D2D2D2D2D2D   
+    65 000001D0 2D2D2D2D2D2D23232D-         db '------##-----##---##--##----##---##-----##--##-##--##-##--##-##--##-##--##------'
+    66 000001D9 2D2D2D2D23232D2D2D-
+    67 000001E2 23232D2D23232D2D2D-
+    68 000001EB 2D23232D2D2D23232D-
+    69 000001F4 2D2D2D2D23232D2D23-
+    70 000001FD 232D23232D2D23232D-
+    71 00000206 23232D2D23232D2323-
+    72 0000020F 2D2D23232D23232D2D-
+    73 00000218 23232D2D2D2D2D2D   
+    74 00000220 2D2D2D2D2D2D23232D-         db '------##-----##-#-##--##----##---##-----##--##--####--##--##-##--##-##--##------'
+    75 00000229 2D2D2D2D23232D232D-
+    76 00000232 23232D2D23232D2D2D-
+    77 0000023B 2D23232D2D2D23232D-
+    78 00000244 2D2D2D2D23232D2D23-
+    79 0000024D 232D2D232323232D2D-
+    80 00000256 23232D2D23232D2323-
+    81 0000025F 2D2D23232D23232D2D-
+    82 00000268 23232D2D2D2D2D2D   
+    83 00000270 2D2D2D2D2D2D232323-         db '------######-##-#-##--##----##---##-----######---##---######-#####--##--##------'
+    84 00000279 2323232D23232D232D-
+    85 00000282 23232D2D23232D2D2D-
+    86 0000028B 2D23232D2D2D23232D-
+    87 00000294 2D2D2D2D2323232323-
+    88 0000029D 232D2D2D23232D2D2D-
+    89 000002A6 2323232323232D2323-
+    90 000002AF 2323232D2D23232D2D-
+    91 000002B8 23232D2D2D2D2D2D   
+    92 000002C0 2D2D2D2D2D2D2D2D2D-         db '----------##-#######--##----##---##-----##--##---##---##--##-##-##--##--##------'
+    93 000002C9 2D23232D2323232323-
+    94 000002D2 23232D2D23232D2D2D-
+    95 000002DB 2D23232D2D2D23232D-
+    96 000002E4 2D2D2D2D23232D2D23-
+    97 000002ED 232D2D2D23232D2D2D-
+    98 000002F6 23232D2D23232D2323-
+    99 000002FF 2D23232D2D23232D2D-
+   100 00000308 23232D2D2D2D2D2D   
+   101 00000310 2D2D2D2D2D2D2D2D2D-         db '----------##-###-###--##----##---##-----##--##---##---##--##-##--##-##--##------'
+   102 00000319 2D23232D2323232D23-
+   103 00000322 23232D2D23232D2D2D-
+   104 0000032B 2D23232D2D2D23232D-
+   105 00000334 2D2D2D2D23232D2D23-
+   106 0000033D 232D2D2D23232D2D2D-
+   107 00000346 23232D2D23232D2323-
+   108 0000034F 2D2D23232D23232D2D-
+   109 00000358 23232D2D2D2D2D2D   
+   110 00000360 2D2D2D2D2D2D232323-         db '------######-##---##-####---##----#####-##--##---##---##--##-##--##-#####-------'
+   111 00000369 2323232D23232D2D2D-
+   112 00000372 23232D232323232D2D-
+   113 0000037B 2D23232D2D2D2D2323-
+   114 00000384 2323232D23232D2D23-
+   115 0000038D 232D2D2D23232D2D2D-
+   116 00000396 23232D2D23232D2323-
+   117 0000039F 2D2D23232D23232323-
+   118 000003A8 232D2D2D2D2D2D2D   
+   119                                  
+   120                                  switchyard5row:
+   121 000003B0 2D2D2D2D2D2D2D2D2D-         db '---------#####-##---##-####-######-#####-##-##-##--##--###--####--####----------'
+   122 000003B9 23232323232D23232D-
+   123 000003C2 2D2D23232D23232323-
+   124 000003CB 2D2323232323232D23-
+   125 000003D4 232323232D23232D23-
+   126 000003DD 232D23232D2D23232D-
+   127 000003E6 2D2323232D2D232323-
+   128 000003EF 232D2D232323232D2D-
+   129 000003F8 2D2D2D2D2D2D2D2D   
+   130 00000400 2D2D2D2D2D2D2D2D2D-         db '---------##----##---##--##----##---##----##-##--####--##-##-##-##-##-##---------'
+   131 00000409 23232D2D2D2D23232D-
+   132 00000412 2D2D23232D2D23232D-
+   133 0000041B 2D2D2D23232D2D2D23-
+   134 00000424 232D2D2D2D23232D23-
+   135 0000042D 232D2D232323232D2D-
+   136 00000436 23232D23232D23232D-
+   137 0000043F 23232D23232D23232D-
+   138 00000448 2D2D2D2D2D2D2D2D   
+   139 00000450 2D2D2D2D2D2D2D2D2D-         db '---------#####-##-#-##--##----##---##----#####---##---#####-####--##-##---------'
+   140 00000459 23232323232D23232D-
+   141 00000462 232D23232D2D23232D-
+   142 0000046B 2D2D2D23232D2D2D23-
+   143 00000474 232D2D2D2D23232323-
+   144 0000047D 232D2D2D23232D2D2D-
+   145 00000486 23232323232D232323-
+   146 0000048F 232D2D23232D23232D-
+   147 00000498 2D2D2D2D2D2D2D2D   
+   148 000004A0 2D2D2D2D2D2D2D2D2D-         db '------------##-#######--##----##---##----##-##---##---##-##-##-##-##-##---------'
+   149 000004A9 2D2D2D23232D232323-
+   150 000004B2 232323232D2D23232D-
+   151 000004BB 2D2D2D23232D2D2D23-
+   152 000004C4 232D2D2D2D23232D23-
+   153 000004CD 232D2D2D23232D2D2D-
+   154 000004D6 23232D23232D23232D-
+   155 000004DF 23232D23232D23232D-
+   156 000004E8 2D2D2D2D2D2D2D2D   
+   157 000004F0 2D2D2D2D2D2D2D2D2D-         db '---------#####--##-##--####---##---#####-##-##---##---##-##-##-##-####----------'
+   158 000004F9 23232323232D2D2323-
+   159 00000502 2D23232D2D23232323-
+   160 0000050B 2D2D2D23232D2D2D23-
+   161 00000514 232323232D23232D23-
+   162 0000051D 232D2D2D23232D2D2D-
+   163 00000526 23232D23232D23232D-
+   164 0000052F 23232D232323232D2D-
+   165 00000538 2D2D2D2D2D2D2D2D   
+   166                                  clrscr:
+   167 00000540 06                          push es
+   168 00000541 50                          push ax
+   169 00000542 57                          push di
+   170 00000543 B800B8                      mov ax, 0xb800
+   171 00000546 8EC0                        mov es, ax
+   172 00000548 BF0000                      mov di, 0
+   173                                      nextloc:
+   174 0000054B 26C7052007                  mov word [es:di], 0x0720
+   175 00000550 81C70200                    add di, 2
+   176 00000554 81FFA00F                    cmp di, 4000
+   177 00000558 75F1                        jne nextloc
+   178 0000055A 5F                          pop di
+   179 0000055B 58                          pop ax
+   180 0000055C 07                          pop es
+   181 0000055D C3                          ret
+   182                                  
+   183                                  bounds:
+   184 0000055E 50                          push ax
+   185 0000055F 51                          push cx
+   186 00000560 57                          push di
+   187 00000561 06                          push es
+   188 00000562 6800B8                      push 0xb800
+   189 00000565 07                          pop es
+   190 00000566 B401                        mov ah,0x01     ; 1 for blue and 9 for high intensity blue
+   191 00000568 B03D                        mov al,0x3d     ; = 
+   192 0000056A BF0000                      mov di,0
+   193 0000056D B95000                      mov cx,80
+   194 00000570 F3AB                        rep stosw
+   195 00000572 BFA000                      mov di,160
+   196 00000575 B95000                      mov cx,80
+   197 00000578 F3AB                        rep stosw
+   198 0000057A BF000F                      mov di,3840
+   199 0000057D B95000                      mov cx,80
+   200 00000580 F3AB                        rep stosw
+   201 00000582 07                          pop es
+   202 00000583 5F                          pop di
+   203 00000584 59                          pop cx
+   204 00000585 58                          pop ax
+   205 00000586 C3                          ret
+   206                                  prtswitchyard:     ; just give it a row no to start printnig on
+   207 00000587 55                          push bp
+   208 00000588 89E5                        mov bp,sp
+   209 0000058A 50                          push ax
+   210 0000058B 53                          push bx
+   211 0000058C 51                          push cx
+   212 0000058D 52                          push dx
+   213 0000058E 56                          push si
+   214 0000058F 57                          push di
+   215 00000590 06                          push es
+   216                                  
+   217 00000591 B800B8                      mov ax, 0xb800
+   218 00000594 8EC0                        mov es,ax
+   219 00000596 8B4604                      mov ax,[bp+4]
+   220 00000599 BBA000                      mov bx,160
+   221 0000059C F7E3                        mul bx
+   222 0000059E 89C7                        mov di,ax
+   223                                  
+   224 000005A0 BB0000                      mov bx,0
+   225 000005A3 B93002                      mov cx,560
+   226                                      printswt:
+   227 000005A6 8A97[8001]                      mov dl,[strswitchyard+bx]
+   228 000005AA 80FA2D                          cmp dl,0x2d
+   229 000005AD 7406                            je space
+   230 000005AF B8DB0E                          mov ax,0x0EDB
+   231 000005B2 E90300                          jmp prit
+   232                                          space:
+   233 000005B5 B82007                              mov ax,0x0720
+   234                                          prit:
+   235 000005B8 AB                              stosw
+   236 000005B9 43                              inc bx
+   237                                          
+   238 000005BA E2EA                        loop printswt
+   239                                  
+   240 000005BC 07                          pop es
+   241 000005BD 5F                          pop di
+   242 000005BE 5E                          pop si
+   243 000005BF 5A                          pop dx
+   244 000005C0 59                          pop cx
+   245 000005C1 5B                          pop bx
+   246 000005C2 58                          pop ax
+   247 000005C3 5D                          pop bp
+   248 000005C4 C20200                      ret 2
+   249                                  
+   250                                  prtwelcome:     ; just give it a row no to start printnig on
+   251 000005C7 55                          push bp
+   252 000005C8 89E5                        mov bp,sp
+   253 000005CA 50                          push ax
+   254 000005CB 53                          push bx
+   255 000005CC 51                          push cx
+   256 000005CD 52                          push dx
+   257 000005CE 56                          push si
+   258 000005CF 57                          push di
+   259 000005D0 06                          push es
+   260                                  
+   261 000005D1 B800B8                      mov ax, 0xb800
+   262 000005D4 8EC0                        mov es,ax
+   263 000005D6 8B4604                      mov ax,[bp+4]
+   264 000005D9 BBA000                      mov bx,160
+   265 000005DC F7E3                        mul bx
+   266 000005DE 89C7                        mov di,ax
+   267                                  
+   268 000005E0 BB0000                      mov bx,0
+   269 000005E3 B94001                      mov cx,320
+   270                                      printwel:
+   271 000005E6 8A97[4000]                      mov dl,[strwelcome+bx]
+   272 000005EA 80FA2D                          cmp dl,0x2d
+   273 000005ED 7406                            je isspace
+   274 000005EF B82060                          mov ax,0x6020
+   275 000005F2 E90300                          jmp prt
+   276                                          isspace:
+   277 000005F5 B82007                              mov ax,0x0720
+   278                                          prt:
+   279 000005F8 AB                              stosw
+   280 000005F9 43                              inc bx
+   281                                          
+   282 000005FA E2EA                        loop printwel
+   283 000005FC 07                          pop es
+   284 000005FD 5F                          pop di
+   285 000005FE 5E                          pop si
+   286 000005FF 5A                          pop dx
+   287 00000600 59                          pop cx
+   288 00000601 5B                          pop bx
+   289 00000602 58                          pop ax
+   290 00000603 5D                          pop bp
+   291 00000604 C20200                      ret 2
+   292                                  
+   293                                  mainswitchyard:
+   294 00000607 55                          push bp
+   295 00000608 89E5                        mov bp,sp
+   296 0000060A 50                          push ax
+   297 0000060B 53                          push bx
+   298 0000060C 51                          push cx
+   299 0000060D 52                          push dx
+   300 0000060E 56                          push si
+   301 0000060F 57                          push di
+   302 00000610 06                          push es
+   303                                  
+   304 00000611 B800B8                      mov ax, 0xb800
+   305 00000614 8EC0                        mov es,ax
+   306 00000616 8B4604                      mov ax,[bp+4]
+   307 00000619 BBA000                      mov bx,160
+   308 0000061C F7E3                        mul bx
+   309 0000061E 89C7                        mov di,ax
+   310                                  
+   311 00000620 BB0000                      mov bx,0
+   312 00000623 B99001                      mov cx,400
+   313                                      mloop:
+   314 00000626 8A97[B003]                      mov dl,[switchyard5row+bx]
+   315 0000062A 80FA2D                          cmp dl,0x2d
+   316 0000062D 7406                            je eq
+   317 0000062F B8DB0E                          mov ax,0x0EDB
+   318 00000632 E90300                          jmp pt
+   319                                          eq:
+   320 00000635 B82007                              mov ax,0x0720
+   321                                          pt:
+   322 00000638 AB                              stosw
+   323 00000639 43                              inc bx
+   324                                          
+   325 0000063A E2EA                        loop mloop
+   326 0000063C 07                          pop es
+   327 0000063D 5F                          pop di
+   328 0000063E 5E                          pop si
+   329 0000063F 5A                          pop dx
+   330 00000640 59                          pop cx
+   331 00000641 5B                          pop bx
+   332 00000642 58                          pop ax
+   333 00000643 5D                          pop bp
+   334 00000644 C20200                      ret 2
+   335                                  
+   336                                  prtopt1:
+   337 00000647 55                          push bp
+   338 00000648 50                          push ax
+   339 00000649 53                          push bx
+   340 0000064A 51                          push cx
+   341 0000064B 52                          push dx
+   342 0000064C 06                          push es
+   343 0000064D B413                        mov ah, 0x13 ; service 13 - print string
+   344 0000064F B000                        mov al, 0 ; subservice 01 – update cursor
+   345 00000651 B700                        mov bh, 0 ; output on page 0
+   346 00000653 B307                        mov bl,0x07
+   347 00000655 2E803E[0700]01              cmp byte[cs:selection],1
+   348 0000065B 7502                        jne skip1
+   349 0000065D B387                        mov bl, 0x87
+   350                                      skip1:
+   351 0000065F BA2012                      mov dx, 0x1220
+   352 00000662 B90F00                      mov cx, 15
+   353 00000665 0E                          push cs
+   354 00000666 07                          pop es
+   355 00000667 BD[1F00]                    mov bp, opt1 ; offset of string
+   356 0000066A CD10                        int 0x10
+   357 0000066C 07                          pop es
+   358 0000066D 5A                          pop dx
+   359 0000066E 59                          pop cx
+   360 0000066F 5B                          pop bx
+   361 00000670 58                          pop ax
+   362 00000671 5D                          pop bp
+   363 00000672 C3                          ret
+   364                                  prtopt2:
+   365 00000673 55                          push bp
+   366 00000674 50                          push ax
+   367 00000675 53                          push bx
+   368 00000676 51                          push cx
+   369 00000677 52                          push dx
+   370 00000678 06                          push es
+   371 00000679 B413                        mov ah, 0x13 ; service 13 - print string
+   372 0000067B B000                        mov al, 0 ; subservice 01 – update cursor
+   373 0000067D B700                        mov bh, 0 ; output on page 0
+   374 0000067F B307                        mov bl, 0x07
+   375 00000681 2E803E[0700]02              cmp byte[cs:selection],2
+   376 00000687 7502                        jne skip2
+   377 00000689 B387                        mov bl, 0x87
+   378                                      skip2:
+   379 0000068B BA2014                      mov dx, 0x1420
+   380 0000068E B90E00                      mov cx, 14 ; length of string
+   381 00000691 0E                          push cs
+   382 00000692 07                          pop es ; segment of string
+   383 00000693 BD[2E00]                    mov bp, opt2 ; offset of string
+   384 00000696 CD10                        int 0x10
+   385 00000698 07                          pop es
+   386 00000699 5A                          pop dx
+   387 0000069A 59                          pop cx
+   388 0000069B 5B                          pop bx
+   389 0000069C 58                          pop ax
+   390 0000069D 5D                          pop bp
+   391 0000069E C3                          ret
+   392                                  prtopt3:
+   393 0000069F 55                          push bp
+   394 000006A0 50                          push ax
+   395 000006A1 53                          push bx
+   396 000006A2 51                          push cx
+   397 000006A3 52                          push dx
+   398 000006A4 06                          push es
+   399 000006A5 B413                        mov ah, 0x13 ; service 13 - print string
+   400 000006A7 B000                        mov al, 0 ; subservice 01 – update cursor
+   401 000006A9 B700                        mov bh, 0 ; output on page 0
+   402 000006AB B307                        mov bl, 0x07
+   403 000006AD 2E803E[0700]03              cmp byte[cs:selection],3
+   404 000006B3 7502                        jne skip3
+   405 000006B5 B387                        mov bl, 0x87
+   406                                      skip3:
+   407 000006B7 BA2616                      mov dx, 0x1626
+   408 000006BA B90400                      mov cx, 4 ; length of string
+   409 000006BD 0E                          push cs
+   410 000006BE 07                          pop es ; segment of string
+   411 000006BF BD[3C00]                    mov bp, opt3 ; offset of string
+   412 000006C2 CD10                        int 0x10
+   413 000006C4 07                          pop es
+   414 000006C5 5A                          pop dx
+   415 000006C6 59                          pop cx
+   416 000006C7 5B                          pop bx
+   417 000006C8 58                          pop ax
+   418 000006C9 5D                          pop bp
+   419 000006CA C3                          ret
+   420                                  updopts:
+   421 000006CB E879FF                      call prtopt1
+   422 000006CE E8A2FF                      call prtopt2
+   423 000006D1 E8CBFF                      call prtopt3
+   424 000006D4 C3                          ret
+   425                                  mainmenu:
+   426 000006D5 55                          push bp
+   427 000006D6 89E5                        mov bp,sp
+   428 000006D8 50                          push ax
+   429 000006D9 53                          push bx
+   430 000006DA 51                          push cx
+   431 000006DB 52                          push dx
+   432 000006DC 56                          push si
+   433 000006DD 57                          push di
+   434 000006DE 06                          push es
+   435 000006DF 1E                          push ds
+   436                                  
+   437 000006E0 E85DFE                      call clrscr
+   438 000006E3 E878FE                      call bounds
+   439 000006E6 680700                      push 7
+   440 000006E9 E81BFF                      call mainswitchyard
+   441 000006EC E8DCFF                      call updopts
+   442 000006EF 1F                          pop ds
+   443 000006F0 07                          pop es
+   444 000006F1 5F                          pop di
+   445 000006F2 5E                          pop si
+   446 000006F3 5A                          pop dx
+   447 000006F4 59                          pop cx
+   448 000006F5 5B                          pop bx
+   449 000006F6 58                          pop ax
+   450 000006F7 5D                          pop bp
+   451 000006F8 C3                          ret
+   452                                      
+   453                                  initialscr:
+   454 000006F9 E844FE                      call clrscr
+   455 000006FC E85FFE                      call bounds
+   456 000006FF 680500                      push 5
+   457 00000702 E8C2FE                      call prtwelcome
+   458 00000705 680B00                      push 11
+   459 00000708 E87CFE                      call prtswitchyard
+   460 0000070B B413                        mov ah, 0x13
+   461 0000070D B000                        mov al, 0
+   462 0000070F B700                        mov bh, 0
+   463 00000711 B387                        mov bl, 0x87
+   464 00000713 BA1D16                      mov dx, 0x161d
+   465 00000716 B91400                      mov cx, 20
+   466 00000719 0E                          push cs
+   467 0000071A 07                          pop es
+   468 0000071B BD[0A00]                    mov bp, prompt
+   469 0000071E CD10                        int 0x10
+   470 00000720 C3                          ret
+   471                                  
+   472                                  initkisr:
+   473 00000721 50                          push ax
+   474 00000722 E460                        in al,0x60
+   475 00000724 3C1C                        cmp al,0x1c
+   476 00000726 7506                        jne inichain
+   477 00000728 2EC606[0900]01              mov byte [cs:enterPressed],1
+   478                                      inichain:
+   479 0000072E 58                          pop ax
+   480 0000072F 2EFF2E[0300]                jmp far [cs:oldisr]
+   481                                  
+   482                                      menukisr:
+   483 00000734 50                              push ax
+   484 00000735 E460                            in al, 0x60
+   485                                  
+   486 00000737 3C48                            cmp al, 0x48
+   487 00000739 751C                            jne cmp2
+   488 0000073B 2EFE0E[0700]                    dec byte [cs:selection]
+   489 00000740 2E803E[0700]00                  cmp byte [cs:selection], 0
+   490 00000746 7706                            ja skip4
+   491 00000748 2EC606[0700]03                  mov byte [cs:selection], 3
+   492                                      skip4:
+   493 0000074E 2EC606[0800]01                  mov byte [cs:changed], 1
+   494 00000754 E92A00                          jmp menuchain
+   495                                  
+   496                                      cmp2:
+   497 00000757 3C50                            cmp al, 0x50
+   498 00000759 751C                            jne cmp3
+   499 0000075B 2EFE06[0700]                    inc byte [cs:selection]
+   500 00000760 2E803E[0700]04                  cmp byte [cs:selection], 4
+   501 00000766 7206                            jb skip5
+   502 00000768 2EC606[0700]01                  mov byte [cs:selection], 1
+   503                                      skip5:
+   504 0000076E 2EC606[0800]01                  mov byte [cs:changed], 1
+   505 00000774 E90A00                          jmp menuchain
+   506                                  
+   507                                      cmp3:
+   508 00000777 3C1C                            cmp al, 0x1c
+   509 00000779 7506                            jne menuchain
+   510 0000077B 2EC606[0900]01                  mov byte [cs:enterPressed], 1
+   511                                  
+   512                                      menuchain:
+   513 00000781 58                              pop ax
+   514 00000782 2EFF2E[0300]                    jmp far [cs:oldisr]
+   515                                  
+   516                                  start:
+   517 00000787 31C0                        xor ax, ax
+   518 00000789 8EC0                        mov es, ax
+   519 0000078B 26A12400                    mov ax, [es:9*4]
+   520 0000078F A3[0300]                    mov [oldisr], ax
+   521 00000792 26A12600                    mov ax, [es:9*4+2]
+   522 00000796 A3[0500]                    mov [oldisr+2], ax
+   523                                  
+   524 00000799 FA                          cli
+   525 0000079A 26C7062400[2107]            mov word [es:9*4], initkisr
+   526 000007A1 268C0E2600                  mov [es:9*4+2], cs
+   527 000007A6 FB                          sti
+   528 000007A7 E84FFF                      call initialscr
+   529                                  
+   530                                  initwait:
+   531 000007AA 803E[0900]01                cmp byte [enterPressed], 1
+   532 000007AF 75F9                        jne initwait
+   533 000007B1 2EC606[0900]00              mov byte [cs:enterPressed], 0
+   534                                  
+   535 000007B7 31C0                        xor ax, ax
+   536 000007B9 8EC0                        mov es, ax
+   537 000007BB FA                          cli
+   538 000007BC 26C7062400[3407]            mov word [es:9*4], menukisr
+   539 000007C3 268C0E2600                  mov [es:9*4+2], cs
+   540 000007C8 FB                          sti
+   541                                  
+   542 000007C9 E809FF                      call mainmenu
+   543                                  
+   544                                  menuwait:
+   545 000007CC 803E[0800]01                cmp byte [changed], 1
+   546 000007D1 7509                        jne check_enter
+   547 000007D3 2EC606[0800]00              mov byte [cs:changed], 0
+   548 000007D9 E8EFFE                      call updopts
+   549                                  
+   550                                  check_enter:
+   551 000007DC 803E[0900]01                cmp byte [enterPressed], 1
+   552 000007E1 75E9                        jne menuwait
+   553 000007E3 2EC606[0900]00              mov byte [cs:enterPressed], 0
+   554                                  
+   555 000007E9 31C0                        xor ax, ax
+   556 000007EB 8EC0                        mov es, ax
+   557 000007ED FA                          cli
+   558 000007EE A1[0300]                    mov ax, [oldisr]
+   559 000007F1 26A32400                    mov [es:9*4], ax
+   560 000007F5 A1[0500]                    mov ax, [oldisr+2]
+   561 000007F8 26A32600                    mov [es:9*4+2], ax
+   562 000007FC FB                          sti
+   563                                  
+   564 000007FD B8004C                      mov ax, 0x4c00
+   565 00000800 CD21                        int 0x21
